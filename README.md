@@ -16,7 +16,7 @@ The implementations reproduce and modularize the architectures taught in Vizuara
 ## Repository Structure
 
 Both implementations are provided in two synchronized formats:
-- **Modular packages** inside [`autoencoder_vae/`](./autoencoder_vae) and [`ddpm/`](./ddpm), each with its own Colab runner notebook and saved training results/visualizations.
+- **Modular packages** inside [`autoencoder_vae/`](./autoencoder_vae) and [`ddpm/`](./ddpm), each with its own Colab runner notebook and saved training results.
 - **Standalone root notebooks** ([`autoencoder_vae.ipynb`](./autoencoder_vae.ipynb) and [`ddpm.ipynb`](./ddpm.ipynb)) containing the complete self-contained code in a single file.
 
 ```text
@@ -31,10 +31,7 @@ vision_transformers/
 │   ├── train.py                       # Training loops & metrics export
 │   ├── visualize.py                   # Reconstruction & prior sampling plots
 │   ├── autoencoder_vae.ipynb          # Modular Colab runner notebook (A100 / L4 GPU)
-│   ├── training_results.json          # Saved epoch-by-epoch MSE, BCE & KLD metrics
-│   ├── ae_reconstructions.png         # Vanilla Autoencoder test reconstructions
-│   ├── vae_reconstructions.png        # VAE test reconstructions
-│   └── vae_samples.png                # Digits sampled from prior z ~ N(0, I)
+│   └── training_results.json          # Saved Colab training metrics (NVIDIA L4 GPU)
 └── ddpm/
     ├── __init__.py
     ├── dataset.py                     # MNIST [-1, 1] scaled dataset & DataLoader
@@ -43,9 +40,7 @@ vision_transformers/
     ├── train.py                       # DDPM noise-prediction training loop & metrics export
     ├── sample.py                      # Reverse Markov chain sampling & visualization
     ├── ddpm.ipynb                     # Modular Colab runner notebook (A100 / L4 GPU)
-    ├── training_results.json          # Saved epoch-by-epoch noise MSE loss history
-    ├── forward_diffusion.png          # Forward noising trajectory q(x_t | x_0)
-    └── ddpm_samples.png               # Digits generated from pure Gaussian noise
+    └── training_results.json          # Saved Colab training metrics (NVIDIA A100-SXM4-80GB GPU)
 ```
 
 ---
@@ -72,7 +67,7 @@ vision_transformers/
 
 ## Training in Google Colab
 
-All notebooks are pre-configured in their Colab metadata to request an **NVIDIA A100 GPU** by default (`"gpuType": "A100"`), with **L4 GPU** as the recommended fallback if A100 capacity is unavailable (`Runtime -> Change runtime type -> A100 GPU` or `L4 GPU`).
+All notebooks are pre-configured in their Colab metadata to request an **NVIDIA A100 GPU** by default (`"gpuType": "A100"`), with **L4 GPU** as the automatic fallback if A100 capacity is unavailable (`Runtime -> Change runtime type -> A100 GPU` or `L4 GPU`).
 
 | Implementation | Modular Runner Notebook | Standalone Root Notebook |
 | :--- | :--- | :--- |
@@ -81,22 +76,23 @@ All notebooks are pre-configured in their Colab metadata to request an **NVIDIA 
 
 ---
 
-## Saved Training Results
+## Saved Colab Training Results
 
-Training outputs and visualizations are stored directly inside their respective module directories:
+Full epoch-by-epoch training metrics are stored in [`autoencoder_vae/training_results.json`](./autoencoder_vae/training_results.json) and [`ddpm/training_results.json`](./ddpm/training_results.json).
 
-### Autoencoder & VAE (`autoencoder_vae/`)
-- **Metrics:** [`autoencoder_vae/training_results.json`](./autoencoder_vae/training_results.json)
-- **Vanilla Autoencoder Reconstructions:**
-  ![Vanilla Autoencoder Reconstructions](./autoencoder_vae/ae_reconstructions.png)
-- **VAE Reconstructions:**
-  ![VAE Reconstructions](./autoencoder_vae/vae_reconstructions.png)
-- **VAE Prior Samples ($z \sim \mathcal{N}(0, I)$):**
-  ![VAE Generated Samples](./autoencoder_vae/vae_samples.png)
+### 1. Autoencoder & VAE (`autoencoder_vae/` — Trained on NVIDIA L4 GPU)
 
-### DDPM (`ddpm/`)
-- **Metrics:** [`ddpm/training_results.json`](./ddpm/training_results.json)
-- **Forward Diffusion Trajectory ($q(x_t \mid x_0)$):**
-  ![Forward Diffusion Process](./ddpm/forward_diffusion.png)
-- **Reverse Diffusion Samples ($p_\theta(x_{t-1} \mid x_t)$):**
-  ![DDPM Generated Samples](./ddpm/ddpm_samples.png)
+| Model | Epochs | Initial Loss (Epoch 1) | Final Loss |
+| :--- | :---: | :---: | :---: |
+| **Vanilla Autoencoder** (`latent_dim=2`) | 10 | `0.061032` (MSE) | `0.039341` (MSE) |
+| **Variational Autoencoder** (`latent_dim=20`) | 15 | `165.1622` (`BCE: 149.8300`, `KLD: 15.3322`) | `104.7431` (`BCE: 79.4418`, `KLD: 25.3013`) |
+
+### 2. DDPM (`ddpm/` — Trained on NVIDIA A100-SXM4-80GB High RAM GPU)
+
+| Epoch | Noise Prediction MSE Loss |
+| :---: | :---: |
+| 1 | `0.139174` |
+| 5 | `0.030304` |
+| 10 | `0.026757` |
+| 15 | `0.025046` |
+| 20 | `0.024263` |

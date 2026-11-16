@@ -1,0 +1,25 @@
+{
+  "runtime_gpu": "NVIDIA A100-SXM4-80GB",
+  "ddpm": [
+    {"epoch": 1, "noise_mse_loss": 0.139174},
+    {"epoch": 2, "noise_mse_loss": 0.045431},
+    {"epoch": 3, "noise_mse_loss": 0.036169},
+    {"epoch": 4, "noise_mse_loss": 0.032598},
+    {"epoch": 5, "noise_mse_loss": 0.030304},
+    {"epoch": 6, "noise_mse_loss": 0.029057},
+    {"epoch": 7, "noise_mse_loss": 0.027837},
+    {"epoch": 8, "noise_mse_loss": 0.027657},
+    {"epoch": 9, "noise_mse_loss": 0.027019},
+    {"epoch": 10, "noise_mse_loss": 0.026757},
+    {"epoch": 11, "noise_mse_loss": 0.026618},
+    {"epoch": 12, "noise_mse_loss": 0.025694},
+    {"epoch": 13, "noise_mse_loss": 0.025605},
+    {"epoch": 14, "noise_mse_loss": 0.025070},
+    {"epoch": 15, "noise_mse_loss": 0.025046},
+    {"epoch": 16, "noise_mse_loss": 0.025056},
+    {"epoch": 17, "noise_mse_loss": 0.024690},
+    {"epoch": 18, "noise_mse_loss": 0.024829},
+    {"epoch": 19, "noise_mse_loss": 0.024245},
+    {"epoch": 20, "noise_mse_loss": 0.024263}
+  ]
+}

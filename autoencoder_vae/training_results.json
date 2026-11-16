@@ -1,0 +1,32 @@
+{
+  "runtime_gpu": "NVIDIA L4",
+  "autoencoder": [
+    {"epoch": 1, "mse_loss": 0.061032},
+    {"epoch": 2, "mse_loss": 0.047800},
+    {"epoch": 3, "mse_loss": 0.044566},
+    {"epoch": 4, "mse_loss": 0.043063},
+    {"epoch": 5, "mse_loss": 0.042065},
+    {"epoch": 6, "mse_loss": 0.041254},
+    {"epoch": 7, "mse_loss": 0.040655},
+    {"epoch": 8, "mse_loss": 0.040100},
+    {"epoch": 9, "mse_loss": 0.039696},
+    {"epoch": 10, "mse_loss": 0.039341}
+  ],
+  "vae": [
+    {"epoch": 1, "total_loss": 165.1622, "bce_loss": 149.8300, "kld_loss": 15.3322},
+    {"epoch": 2, "total_loss": 120.9769, "bce_loss": 98.5390, "kld_loss": 22.4379},
+    {"epoch": 3, "total_loss": 114.2920, "bce_loss": 90.3139, "kld_loss": 23.9781},
+    {"epoch": 4, "total_loss": 111.3720, "bce_loss": 86.8196, "kld_loss": 24.5525},
+    {"epoch": 5, "total_loss": 109.6193, "bce_loss": 84.8147, "kld_loss": 24.8046},
+    {"epoch": 6, "total_loss": 108.5424, "bce_loss": 83.5763, "kld_loss": 24.9661},
+    {"epoch": 7, "total_loss": 107.6935, "bce_loss": 82.6543, "kld_loss": 25.0392},
+    {"epoch": 8, "total_loss": 107.0712, "bce_loss": 81.9524, "kld_loss": 25.1188},
+    {"epoch": 9, "total_loss": 106.6449, "bce_loss": 81.4487, "kld_loss": 25.1961},
+    {"epoch": 10, "total_loss": 106.1455, "bce_loss": 80.9085, "kld_loss": 25.2370},
+    {"epoch": 11, "total_loss": 105.8656, "bce_loss": 80.5740, "kld_loss": 25.2915},
+    {"epoch": 12, "total_loss": 105.5318, "bce_loss": 80.2274, "kld_loss": 25.3044},
+    {"epoch": 13, "total_loss": 105.2104, "bce_loss": 79.9125, "kld_loss": 25.2979},
+    {"epoch": 14, "total_loss": 104.9812, "bce_loss": 79.6821, "kld_loss": 25.2991},
+    {"epoch": 15, "total_loss": 104.7431, "bce_loss": 79.4418, "kld_loss": 25.3013}
+  ]
+}
