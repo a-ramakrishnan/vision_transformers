@@ -2,7 +2,13 @@ import torch
 import matplotlib.pyplot as plt
 
 
-def plot_forward_diffusion(scheduler, train_loader, timesteps_to_show=None, device="cpu"):
+def plot_forward_diffusion(
+    scheduler,
+    train_loader,
+    timesteps_to_show=None,
+    device="cpu",
+    save_path="forward_diffusion.png",
+):
     if timesteps_to_show is None:
         timesteps_to_show = [0, 100, 300, 600, 999]
 
@@ -21,6 +27,8 @@ def plot_forward_diffusion(scheduler, train_loader, timesteps_to_show=None, devi
 
     plt.suptitle("Forward Diffusion Process q(x_t | x_0)")
     plt.tight_layout()
+    if save_path:
+        plt.savefig(save_path, dpi=150, bbox_inches="tight")
     plt.show()
 
 
@@ -39,7 +47,7 @@ def sample_ddpm(model, scheduler, num_samples=16, im_size=28, im_channels=1, dev
     return imgs
 
 
-def plot_ddpm_samples(generated_imgs):
+def plot_ddpm_samples(generated_imgs, save_path="ddpm_samples.png"):
     num_samples = generated_imgs.shape[0]
     cols = 8
     rows = (num_samples + cols - 1) // cols
@@ -52,4 +60,6 @@ def plot_ddpm_samples(generated_imgs):
 
     plt.suptitle("DDPM: Generated MNIST Digits from Pure Gaussian Noise")
     plt.tight_layout()
+    if save_path:
+        plt.savefig(save_path, dpi=150, bbox_inches="tight")
     plt.show()

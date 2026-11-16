@@ -1,3 +1,4 @@
+import json
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -11,9 +12,11 @@ def train_ddpm(
     lr=1e-4,
     device="cpu",
     checkpoint_path="ddpm_mnist.pth",
+    results_path="training_results.json",
 ):
     optimizer = optim.Adam(model.parameters(), lr=lr)
     criterion = nn.MSELoss()
+    history = []
 
     for epoch in range(num_epochs):
         model.train()
@@ -33,9 +36,14 @@ def train_ddpm(
             losses.append(loss.item())
 
         mean_loss = sum(losses) / len(losses)
+        history.append({"epoch": epoch + 1, "noise_mse_loss": round(mean_loss, 6)})
         print(f"[DDPM] Epoch [{epoch + 1}/{num_epochs}] - Noise MSE Loss: {mean_loss:.6f}")
 
     if checkpoint_path:
         torch.save(model.state_dict(), checkpoint_path)
 
-    return model
+    if results_path:
+        with open(results_path, "w") as f:
+            json.dump({"ddpm": history}, f, indent=2)
+
+    return model, history
