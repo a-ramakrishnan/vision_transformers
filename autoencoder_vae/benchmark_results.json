@@ -1,0 +1,91 @@
+{
+  "runtime_gpu": "NVIDIA L4",
+  "cifar10": {
+    "autoencoder": {
+      "reconstruction": {
+        "mse": 0.004792,
+        "psnr_db": 23.198,
+        "ssim": 0.8396
+      },
+      "generative_quality": {
+        "fid": 361.214,
+        "inception_score_mean": 1.143,
+        "inception_score_std": 0.01,
+        "num_eval_samples": 256
+      },
+      "compute_efficiency": {
+        "total_params": 2371587,
+        "trainable_params": 2371587,
+        "model_size_mb": 9.047,
+        "avg_epoch_time_sec": 3.81,
+        "sampling_latency_ms_per_image": 0.031,
+        "sampling_throughput_imgs_per_sec": 32295.9
+      }
+    },
+    "vae": {
+      "reconstruction": {
+        "mse": 0.011958,
+        "psnr_db": 19.224,
+        "ssim": 0.6505
+      },
+      "generative_quality": {
+        "fid": 206.257,
+        "inception_score_mean": 1.962,
+        "inception_score_std": 0.067,
+        "num_eval_samples": 256
+      },
+      "compute_efficiency": {
+        "total_params": 2896003,
+        "trainable_params": 2896003,
+        "model_size_mb": 11.047,
+        "avg_epoch_time_sec": 3.79,
+        "sampling_latency_ms_per_image": 0.0189,
+        "sampling_throughput_imgs_per_sec": 52867.64
+      }
+    }
+  },
+  "eurosat": {
+    "autoencoder": {
+      "reconstruction": {
+        "mse": 0.002436,
+        "psnr_db": 26.147,
+        "ssim": 0.7574
+      },
+      "generative_quality": {
+        "fid": 301.621,
+        "inception_score_mean": 1.069,
+        "inception_score_std": 0.007,
+        "num_eval_samples": 256
+      },
+      "compute_efficiency": {
+        "total_params": 5529603,
+        "trainable_params": 5529603,
+        "model_size_mb": 21.094,
+        "avg_epoch_time_sec": 5.0,
+        "sampling_latency_ms_per_image": 0.042,
+        "sampling_throughput_imgs_per_sec": 23827.04
+      }
+    },
+    "vae": {
+      "reconstruction": {
+        "mse": 0.00408,
+        "psnr_db": 23.902,
+        "ssim": 0.6846
+      },
+      "generative_quality": {
+        "fid": 231.501,
+        "inception_score_mean": 1.481,
+        "inception_score_std": 0.057,
+        "num_eval_samples": 256
+      },
+      "compute_efficiency": {
+        "total_params": 7626883,
+        "trainable_params": 7626883,
+        "model_size_mb": 29.094,
+        "avg_epoch_time_sec": 5.0,
+        "sampling_latency_ms_per_image": 0.0412,
+        "sampling_throughput_imgs_per_sec": 24301.05
+      }
+    }
+  }
+}

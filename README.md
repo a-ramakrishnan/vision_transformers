@@ -84,3 +84,31 @@ Each package's `benchmark.py` evaluates:
 1. **Reconstruction Fidelity (Test Set):** `MSE`, `PSNR (dB)`, and `SSIM` (for DDPM, measures partial noising to $t = 250$ followed by reverse denoising to $t = 0$).
 2. **Generative Quality (Prior Samples):** **FID** (Fréchet Inception Distance, lower is better) and **Inception Score** (higher is better) computed via pretrained `InceptionV3` features.
 3. **Compute Efficiency:** Parameter count, model size (MB), average epoch time (sec), and sampling latency (`ms/image` and `images/sec`).
+
+---
+
+## Colab Benchmark Results (NVIDIA L4 GPU)
+
+Full epoch-by-epoch training logs and benchmark JSONs are saved in [`autoencoder_vae/training_results.json`](./autoencoder_vae/training_results.json), [`autoencoder_vae/benchmark_results.json`](./autoencoder_vae/benchmark_results.json), [`ddpm/training_results.json`](./ddpm/training_results.json), and [`ddpm/benchmark_results.json`](./ddpm/benchmark_results.json).
+
+### 1. CIFAR-10 ($32 \times 32 \times 3$ RGB)
+
+| Model | Recon MSE ↓ | PSNR (dB) ↑ | SSIM ↑ | FID ↓ | Inception Score ↑ | Params | Avg Epoch | Sampling Latency |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **`ConvAutoencoder`** | **`0.004792`** | **`23.20`** | **`0.8396`** | `361.21` | `1.143 ± 0.010` | `2.37M` | `3.81s` | `0.031 ms/img` |
+| **`ConvVAE`** | `0.011958` | `19.22` | `0.6505` | `206.26` | `1.962 ± 0.067` | `2.90M` | `3.79s` | **`0.019 ms/img`** |
+| **`DDPM`** ($T=1000$) | `0.008657` *(t=250)* | `20.63` | `0.7770` | **`115.65`** | **`3.854 ± 0.251`** | `6.29M` | `30.89s` | `5560.75 ms/img` |
+
+### 2. EuroSAT ($64 \times 64 \times 3$ RGB Satellite Imagery)
+
+| Model | Recon MSE ↓ | PSNR (dB) ↑ | SSIM ↑ | FID ↓ | Inception Score ↑ | Params | Avg Epoch | Sampling Latency |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **`ConvAutoencoder`** | **`0.002436`** | **`26.15`** | **`0.7574`** | `301.62` | `1.069 ± 0.007` | `5.53M` | `5.00s` | `0.042 ms/img` |
+| **`ConvVAE`** | `0.004080` | `23.90` | `0.6846` | `231.50` | `1.481 ± 0.057` | `7.63M` | `5.00s` | **`0.041 ms/img`** |
+| **`DDPM`** ($T=1000$) | `0.006376` *(t=250)* | `21.96` | `0.7155` | **`114.66`** | **`3.314 ± 0.289`** | `6.29M` | `74.59s` | `16895.04 ms/img` |
+
+### Key Empirical Takeaways
+- **Reconstruction vs. Generation Trade-off:** `ConvAutoencoder` achieves the lowest pixel reconstruction error (`23.20 dB` / `26.15 dB` PSNR), but its unregularized latent space yields poor random samples (`FID > 300`).
+- **Probabilistic Latent Regularization:** `ConvVAE` improves generative quality substantially (`FID 206.26` on CIFAR-10, `231.50` on EuroSAT) with sub-millisecond sampling latency.
+- **Iterative Denoising Advantage:** `DDPM` achieves the best generative quality across both datasets (**FID `115.65` / `114.66`**, **IS `3.854` / `3.314`**) at the cost of `1000`-step sequential reverse sampling (`5.56s/img` at $32\times32$, `16.90s/img` at $64\times64$).
+
