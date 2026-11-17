@@ -87,9 +87,27 @@ Each package's `benchmark.py` evaluates:
 
 ---
 
-## Colab Benchmark Results (NVIDIA L4 GPU)
+## Colab Training & Benchmark Results (NVIDIA L4 GPU)
 
 Full epoch-by-epoch training logs and benchmark JSONs are saved in [`autoencoder_vae/training_results.json`](./autoencoder_vae/training_results.json), [`autoencoder_vae/benchmark_results.json`](./autoencoder_vae/benchmark_results.json), [`ddpm/training_results.json`](./ddpm/training_results.json), and [`ddpm/benchmark_results.json`](./ddpm/benchmark_results.json).
+
+### Training Loss Progression
+
+#### CIFAR-10 ($32 \times 32 \times 3$)
+| Model | Epochs | Epoch 1 | Epoch 5 | Epoch 10 | Epoch 15 | Epoch 20 |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **`ConvAutoencoder`** *(MSE)* | 15 | `0.015704` | `0.005085` | `0.004781` | `0.004589` | — |
+| **`ConvVAE`** *(ELBO = BCE + KLD)* | 20 | `1875.08` (`1832.59 + 42.48`) | `1825.35` (`1780.96 + 44.39`) | `1820.84` (`1775.54 + 45.30`) | `1818.85` (`1773.10 + 45.75`) | `1817.56` (`1771.56 + 46.00`) |
+| **`DDPM`** *(Noise MSE)* | 20 | `0.066357` | `0.030972` | `0.028832` | `0.027939` | `0.027495` |
+
+#### EuroSAT ($64 \times 64 \times 3$)
+| Model | Epochs | Epoch 1 | Epoch 5 | Epoch 10 | Epoch 15 | Epoch 20 |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **`ConvAutoencoder`** *(MSE)* | 15 | `0.009568` | `0.003462` | `0.002647` | `0.002509` | — |
+| **`ConvVAE`** *(ELBO = BCE + KLD)* | 20 | `8021.11` (`7792.19 + 228.92`) | `7637.04` (`7601.23 + 35.81`) | `7620.56` (`7584.78 + 35.79`) | `7613.74` (`7578.20 + 35.54`) | `7608.81` (`7573.25 + 35.56`) |
+| **`DDPM`** *(Noise MSE)* | 20 | `0.088894` | `0.024189` | `0.020309` | `0.019337` | `0.018852` |
+
+### Benchmark Comparison
 
 ### 1. CIFAR-10 ($32 \times 32 \times 3$ RGB)
 
