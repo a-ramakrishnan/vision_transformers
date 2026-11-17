@@ -1,0 +1,47 @@
+{
+  "runtime_gpu": "NVIDIA L4",
+  "cifar10": {
+    "reconstruction": {
+      "t_noise_level": 250,
+      "mse": 0.008657,
+      "psnr_db": 20.626,
+      "ssim": 0.777
+    },
+    "generative_quality": {
+      "fid": 115.654,
+      "inception_score_mean": 3.854,
+      "inception_score_std": 0.251,
+      "num_eval_samples": 128
+    },
+    "compute_efficiency": {
+      "total_params": 6293923,
+      "trainable_params": 6293923,
+      "model_size_mb": 24.009,
+      "avg_epoch_time_sec": 30.89,
+      "sampling_latency_ms_per_image": 5560.7524,
+      "sampling_throughput_imgs_per_sec": 0.18
+    }
+  },
+  "eurosat": {
+    "reconstruction": {
+      "t_noise_level": 250,
+      "mse": 0.006376,
+      "psnr_db": 21.955,
+      "ssim": 0.7155
+    },
+    "generative_quality": {
+      "fid": 114.661,
+      "inception_score_mean": 3.314,
+      "inception_score_std": 0.289,
+      "num_eval_samples": 128
+    },
+    "compute_efficiency": {
+      "total_params": 6293923,
+      "trainable_params": 6293923,
+      "model_size_mb": 24.009,
+      "avg_epoch_time_sec": 74.59,
+      "sampling_latency_ms_per_image": 16895.0398,
+      "sampling_throughput_imgs_per_sec": 0.06
+    }
+  }
+}

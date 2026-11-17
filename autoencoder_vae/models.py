@@ -121,19 +121,24 @@ class ConvVAE(nn.Module):
         self.decoder = ConvDecoder(in_channels, image_size, latent_dim, base_channels)
 
     def reparameterize(self, mu, logvar):
+        logvar = torch.clamp(logvar, min=-10.0, max=10.0)
         std = torch.exp(0.5 * logvar)
         eps = torch.randn_like(std)
         return mu + eps * std
 
     def forward(self, x):
         mu, logvar = self.encoder(x)
+        logvar = torch.clamp(logvar, min=-10.0, max=10.0)
         z = self.reparameterize(mu, logvar)
         x_recon = self.decoder(z)
         return x_recon, mu, logvar
 
 
 def vae_loss_function(recon_x, x, mu, logvar, kld_weight=1.0):
-    """ELBO loss = pixel-wise BCE + weighted KL divergence."""
-    bce = F.binary_cross_entropy(recon_x, x, reduction="sum")
-    kld = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+    """Per-sample ELBO loss = pixel-wise BCE + weighted KL divergence."""
+    batch_size = x.size(0)
+    recon_clamped = torch.clamp(recon_x, 1e-6, 1.0 - 1e-6)
+    x_clamped = torch.clamp(x, 0.0, 1.0)
+    bce = F.binary_cross_entropy(recon_clamped, x_clamped, reduction="sum") / batch_size
+    kld = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp()) / batch_size
     return bce + kld_weight * kld, bce, kld
