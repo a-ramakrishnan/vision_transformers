@@ -5,9 +5,15 @@
 
 ## About
 
-This repository is a hands-on, from-scratch PyTorch learning implementation of **Vanilla Autoencoders**, **Variational Autoencoders (VAEs)**, and **Denoising Diffusion Probabilistic Models (DDPMs)** on the MNIST dataset. It is designed to build a first-principles mathematical and architectural understanding of how modern generative diffusion models evolve from deterministic bottleneck autoencoders and probabilistic latent variable models.
+**`vision_transformers`** is a hands-on, from-scratch PyTorch learning repository exploring the mathematical foundations, architectural design, and empirical trade-offs of modern deep generative models—tracing the progression from **Convolutional Autoencoders** and **Variational Autoencoders (VAEs)** to **Denoising Diffusion Probabilistic Models (DDPMs)**.
 
-The implementations reproduce and modularize the architectures taught in Vizuara's deep-dive lectures:
+### Why This Project Exists
+- **First-Principles Implementation:** Every core component—encoder/decoder bottlenecks, the VAE reparameterization trick and ELBO objective, forward/reverse Markov diffusion kernels, sinusoidal timestep embeddings, and time-conditioned U-Nets with self-attention—is implemented cleanly in pure PyTorch without hiding behind high-level generative frameworks.
+- **Multi-Dataset Scaling:** Built to scale seamlessly across **CIFAR-10** ($32 \times 32 \times 3$ natural RGB images), **EuroSAT** ($64 \times 64 \times 3$ Sentinel-2 satellite imagery), **STL-10** ($64 \times 64 \times 3$), **CelebA** ($64 \times 64 \times 3$), and **MNIST** ($32 \times 32 \times 1$).
+- **Quantitative Benchmarking:** Includes an integrated `benchmark.py` suite inside each package to measure **Reconstruction Fidelity** (`MSE`, `PSNR`, `SSIM`), **Generative Quality** (`FID`, `Inception Score`), and **Compute Efficiency** (parameter count, training time/epoch, and sampling latency).
+- **Colab-First Workflow:** Pre-configured for **NVIDIA A100 GPU** (with automatic **L4 GPU** fallback) in both modular packages and synchronized standalone notebooks.
+
+The implementations reproduce and extend the foundations taught in Vizuara's deep-dive lectures:
 1. [Autoencoder + VAE — Intuition + Coding from Scratch](https://www.youtube.com/watch?v=WMIiF-WQY9E&list=PLPTV0NXA_ZSgMaz0Mu-SjCPZNUjz6-6tN&index=9)
 2. [Diffusion Model (DDPM) — Intuition + Coding from Scratch](https://www.youtube.com/watch?v=3Adu4riBh3Y&list=PLPTV0NXA_ZSgMaz0Mu-SjCPZNUjz6-6tN&index=2)
 
@@ -16,52 +22,48 @@ The implementations reproduce and modularize the architectures taught in Vizuara
 ## Repository Structure
 
 Both implementations are provided in two synchronized formats:
-- **Modular packages** inside [`autoencoder_vae/`](./autoencoder_vae) and [`ddpm/`](./ddpm), each with its own Colab runner notebook and saved training results.
-- **Standalone root notebooks** ([`autoencoder_vae.ipynb`](./autoencoder_vae.ipynb) and [`ddpm.ipynb`](./ddpm.ipynb)) containing the complete self-contained code in a single file.
+- **Modular packages** inside [`autoencoder_vae/`](./autoencoder_vae) and [`ddpm/`](./ddpm), each with its own Colab runner notebook, benchmark module, and saved training/benchmark results.
+- **Standalone root notebooks** ([`autoencoder_vae.ipynb`](./autoencoder_vae.ipynb) and [`ddpm.ipynb`](./ddpm.ipynb)) kept in sync with all module changes.
 
 ```text
 vision_transformers/
 ├── README.md
-├── autoencoder_vae.ipynb              # Standalone root notebook (Autoencoder + VAE)
-├── ddpm.ipynb                         # Standalone root notebook (DDPM)
+├── autoencoder_vae.ipynb              # Standalone root notebook (ConvAutoencoder + ConvVAE + Benchmarks)
+├── ddpm.ipynb                         # Standalone root notebook (DDPM + Benchmarks)
 ├── autoencoder_vae/
 │   ├── __init__.py
-│   ├── dataset.py                     # MNIST dataset & DataLoader setup
-│   ├── models.py                      # Autoencoder, Encoder, Decoder, VAE & ELBO loss
-│   ├── train.py                       # Training loops & metrics export
-│   ├── visualize.py                   # Reconstruction & prior sampling plots
+│   ├── dataset.py                     # Multi-dataset loader (CIFAR-10, EuroSAT, STL-10, CelebA, MNIST)
+│   ├── models.py                      # ConvAutoencoder, ConvEncoder, ConvDecoder, ConvVAE & ELBO loss
+│   ├── train.py                       # Training loops with epoch timing & metrics export
+│   ├── visualize.py                   # RGB/grayscale reconstruction & prior-sampling grids
+│   ├── benchmark.py                   # MSE, PSNR, SSIM, FID, Inception Score, Params & Latency
 │   ├── autoencoder_vae.ipynb          # Modular Colab runner notebook (A100 / L4 GPU)
-│   └── training_results.json          # Saved Colab training metrics (NVIDIA L4 GPU)
+│   ├── training_results.json          # Saved epoch-by-epoch training metrics
+│   └── benchmark_results.json         # Saved reconstruction, generative & compute benchmarks
 └── ddpm/
     ├── __init__.py
-    ├── dataset.py                     # MNIST [-1, 1] scaled dataset & DataLoader
-    ├── scheduler.py                   # LinearNoiseScheduler (forward & reverse kernels)
+    ├── dataset.py                     # Multi-dataset [-1, 1] loader (CIFAR-10, EuroSAT, STL-10, CelebA, MNIST)
+    ├── scheduler.py                   # LinearNoiseScheduler (forward & reverse transition kernels)
     ├── unet.py                        # Sinusoidal time embeddings & Time-Conditioned U-Net
-    ├── train.py                       # DDPM noise-prediction training loop & metrics export
-    ├── sample.py                      # Reverse Markov chain sampling & visualization
+    ├── train.py                       # DDPM noise-prediction training loop with epoch timing
+    ├── sample.py                      # Forward diffusion & reverse Markov sampling visualizations
+    ├── benchmark.py                   # Partial-denoising MSE/PSNR/SSIM, FID, IS, Params & Latency
     ├── ddpm.ipynb                     # Modular Colab runner notebook (A100 / L4 GPU)
-    └── training_results.json          # Saved Colab training metrics (NVIDIA A100-SXM4-80GB GPU)
+    ├── training_results.json          # Saved epoch-by-epoch noise MSE loss history
+    └── benchmark_results.json         # Saved reconstruction, generative & compute benchmarks
 ```
 
 ---
 
-## Models & Mathematical Foundations
+## Supported Datasets
 
-### 1. Vanilla Autoencoder & Variational Autoencoder (`autoencoder_vae/`)
-
-- **Vanilla Autoencoder:** Compresses $28 \times 28$ MNIST images ($784$-D) through a deterministic MLP bottleneck (`784 -> 256 -> 64 -> 2`) and reconstructs them via `MSELoss`. While effective for compression, deterministic latent spaces contain gaps that prevent coherent random sampling.
-- **Variational Autoencoder (VAE):** Maps each input $x$ to a probabilistic Gaussian distribution parameterized by mean $\mu$ and log-variance $\log \sigma^2$:
-  - **Reparameterization Trick:** Samples $z = \mu + \sigma \odot \epsilon$ with $\epsilon \sim \mathcal{N}(0, I)$ so gradients flow through stochastic sampling.
-  - **ELBO Objective:** Combines pixel-wise Binary Cross-Entropy reconstruction loss and closed-form Kullback-Leibler divergence:
-    $$\mathcal{L}_{\text{VAE}} = \text{BCE}(x, \hat{x}) - \frac{1}{2} \sum \left(1 + \log \sigma^2 - \mu^2 - \sigma^2\right)$$
-
-### 2. Denoising Diffusion Probabilistic Model (`ddpm/`)
-
-- **Forward Process (`LinearNoiseScheduler.add_noise`):** Progressively corrupts clean images $x_0 \in [-1, 1]$ over $T = 1000$ timesteps using a linear variance schedule $\beta_t \in [10^{-4}, 0.02]$. Using $\alpha_t = 1 - \beta_t$ and $\bar{\alpha}_t = \prod_{s=1}^t \alpha_s$, noisy samples at any timestep $t$ are drawn in closed form:
-  $$q(x_t \mid x_0) = \sqrt{\bar{\alpha}_t} x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon, \quad \epsilon \sim \mathcal{N}(0, I)$$
-- **Time-Conditioned U-Net (`UNet`):** Predicts the injected noise $\epsilon_\theta(x_t, t)$ using `DownBlock`, `MidBlock`, and `UpBlock` stages equipped with `GroupNorm`, `SiLU` activations, residual connections, `MultiheadAttention`, and sinusoidal timestep embeddings.
-- **Reverse Process (`LinearNoiseScheduler.sample_prev_timestep`):** Starts from pure Gaussian noise $x_T \sim \mathcal{N}(0, I)$ and iteratively denoises from $t = T-1$ down to $0$:
-  $$x_{t-1} = \frac{1}{\sqrt{\alpha_t}} \left( x_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \epsilon_\theta(x_t, t) \right) + \sigma_t z$$
+| Dataset | Resolution & Channels | Domain | `dataset_name` |
+| :--- | :---: | :--- | :--- |
+| **CIFAR-10** | $32 \times 32 \times 3$ RGB | Natural objects (50k train / 10k test) | `"cifar10"` |
+| **EuroSAT** | $64 \times 64 \times 3$ RGB | Sentinel-2 satellite imagery (27k, 80/20 split) | `"eurosat"` |
+| **STL-10** | $64 \times 64 \times 3$ RGB | Natural images (`train+unlabeled` / `test`) | `"stl10"` |
+| **CelebA** | $64 \times 64 \times 3$ RGB | Celebrity faces (center-cropped & resized) | `"celeba"` |
+| **MNIST** | $32 \times 32 \times 1$ Grayscale | Handwritten digits (60k train / 10k test) | `"mnist"` |
 
 ---
 
@@ -71,28 +73,14 @@ All notebooks are pre-configured in their Colab metadata to request an **NVIDIA 
 
 | Implementation | Modular Runner Notebook | Standalone Root Notebook |
 | :--- | :--- | :--- |
-| **Autoencoder + VAE** | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/a-ramakrishnan/vision_transformers/blob/main/autoencoder_vae/autoencoder_vae.ipynb) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/a-ramakrishnan/vision_transformers/blob/main/autoencoder_vae.ipynb) |
+| **ConvAutoencoder + ConvVAE** | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/a-ramakrishnan/vision_transformers/blob/main/autoencoder_vae/autoencoder_vae.ipynb) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/a-ramakrishnan/vision_transformers/blob/main/autoencoder_vae.ipynb) |
 | **DDPM** | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/a-ramakrishnan/vision_transformers/blob/main/ddpm/ddpm.ipynb) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/a-ramakrishnan/vision_transformers/blob/main/ddpm.ipynb) |
 
 ---
 
-## Saved Colab Training Results
+## Benchmark Suite
 
-Full epoch-by-epoch training metrics are stored in [`autoencoder_vae/training_results.json`](./autoencoder_vae/training_results.json) and [`ddpm/training_results.json`](./ddpm/training_results.json).
-
-### 1. Autoencoder & VAE (`autoencoder_vae/` — Trained on NVIDIA L4 GPU)
-
-| Model | Epochs | Initial Loss (Epoch 1) | Final Loss |
-| :--- | :---: | :---: | :---: |
-| **Vanilla Autoencoder** (`latent_dim=2`) | 10 | `0.061032` (MSE) | `0.039341` (MSE) |
-| **Variational Autoencoder** (`latent_dim=20`) | 15 | `165.1622` (`BCE: 149.8300`, `KLD: 15.3322`) | `104.7431` (`BCE: 79.4418`, `KLD: 25.3013`) |
-
-### 2. DDPM (`ddpm/` — Trained on NVIDIA A100-SXM4-80GB High RAM GPU)
-
-| Epoch | Noise Prediction MSE Loss |
-| :---: | :---: |
-| 1 | `0.139174` |
-| 5 | `0.030304` |
-| 10 | `0.026757` |
-| 15 | `0.025046` |
-| 20 | `0.024263` |
+Each package's `benchmark.py` evaluates:
+1. **Reconstruction Fidelity (Test Set):** `MSE`, `PSNR (dB)`, and `SSIM` (for DDPM, measures partial noising to $t = 250$ followed by reverse denoising to $t = 0$).
+2. **Generative Quality (Prior Samples):** **FID** (Fréchet Inception Distance, lower is better) and **Inception Score** (higher is better) computed via pretrained `InceptionV3` features.
+3. **Compute Efficiency:** Parameter count, model size (MB), average epoch time (sec), and sampling latency (`ms/image` and `images/sec`).
