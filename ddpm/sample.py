@@ -2,6 +2,13 @@ import torch
 import matplotlib.pyplot as plt
 
 
+def _to_display_image(tensor):
+    img = tensor.cpu()
+    if img.shape[0] == 1:
+        return img.squeeze(0), "gray"
+    return img.permute(1, 2, 0).clamp(0.0, 1.0), None
+
+
 def plot_forward_diffusion(
     scheduler,
     train_loader,
@@ -20,8 +27,9 @@ def plot_forward_diffusion(
         t_tensor = torch.tensor([step], device=device)
         noise = torch.randn_like(x0)
         xt = scheduler.add_noise(x0, noise, t_tensor)
-        img_display = (xt.cpu().squeeze() + 1.0) / 2.0
-        axes[idx].imshow(img_display.clamp(0.0, 1.0), cmap="gray")
+        img_display = ((xt[0] + 1.0) / 2.0).clamp(0.0, 1.0)
+        disp, cmap = _to_display_image(img_display)
+        axes[idx].imshow(disp, cmap=cmap)
         axes[idx].set_title(f"t = {step}")
         axes[idx].axis("off")
 
@@ -33,7 +41,7 @@ def plot_forward_diffusion(
 
 
 @torch.no_grad()
-def sample_ddpm(model, scheduler, num_samples=16, im_size=28, im_channels=1, device="cpu"):
+def sample_ddpm(model, scheduler, num_samples=16, im_size=32, im_channels=3, device="cpu"):
     model.eval()
     xt = torch.randn((num_samples, im_channels, im_size, im_size), device=device)
 
@@ -47,7 +55,7 @@ def sample_ddpm(model, scheduler, num_samples=16, im_size=28, im_channels=1, dev
     return imgs
 
 
-def plot_ddpm_samples(generated_imgs, save_path="ddpm_samples.png"):
+def plot_ddpm_samples(generated_imgs, save_path="ddpm_samples.png", title="DDPM: Generated Samples from Pure Gaussian Noise"):
     num_samples = generated_imgs.shape[0]
     cols = 8
     rows = (num_samples + cols - 1) // cols
@@ -55,10 +63,11 @@ def plot_ddpm_samples(generated_imgs, save_path="ddpm_samples.png"):
     for i in range(num_samples):
         r, c = divmod(i, cols)
         ax = axes[r, c] if rows > 1 else axes[c]
-        ax.imshow(generated_imgs[i].squeeze(), cmap="gray")
+        disp, cmap = _to_display_image(generated_imgs[i])
+        ax.imshow(disp, cmap=cmap)
         ax.axis("off")
 
-    plt.suptitle("DDPM: Generated MNIST Digits from Pure Gaussian Noise")
+    plt.suptitle(title)
     plt.tight_layout()
     if save_path:
         plt.savefig(save_path, dpi=150, bbox_inches="tight")
