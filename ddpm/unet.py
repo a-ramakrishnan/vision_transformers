@@ -171,7 +171,7 @@ class UNet(nn.Module):
     def __init__(self, im_channels=3):
         super().__init__()
         self.down_channels = [64, 128, 256, 256]
-        self.mid_channels = [256, 256, 128]
+        self.mid_channels = [256, 256, 256]
         self.t_emb_dim = 128
         self.down_sample = [True, True, False]
         self.attns = [False, True, True]
