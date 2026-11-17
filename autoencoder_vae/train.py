@@ -77,11 +77,13 @@ def train_vae(
 
             optimizer.zero_grad()
             loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             optimizer.step()
 
-            total_loss += loss.item()
-            total_bce += bce.item()
-            total_kld += kld.item()
+            bs = images.size(0)
+            total_loss += loss.item() * bs
+            total_bce += bce.item() * bs
+            total_kld += kld.item() * bs
 
         n_samples = len(train_loader.dataset)
         avg_total = total_loss / n_samples
